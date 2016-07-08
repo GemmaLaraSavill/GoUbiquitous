@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <service
-            android:name="com.nanodegree.gemma.sunshine.app.SunshineWatchFace"
+            android:name=".SunshineWatchFace"
             android:label="@string/my_digital_name"
             android:permission="android.permission.BIND_WALLPAPER">
             <meta-data
@@ -37,6 +37,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+
     </application>
 
 </manifest>

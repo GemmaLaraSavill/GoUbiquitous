@@ -31,11 +31,23 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Wearable;
 
 import java.lang.ref.WeakReference;
 import java.util.TimeZone;
@@ -61,6 +73,9 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
     private static final int MSG_UPDATE_TIME = 0;
 
     private Bitmap weatherIcon;
+    private double newHighTemp;
+    private double newLowTemp;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     public Engine onCreateEngine() {
@@ -88,7 +103,11 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         }
     }
 
-    private class Engine extends CanvasWatchFaceService.Engine {
+    private class Engine extends CanvasWatchFaceService.Engine implements
+            DataApi.DataListener,
+            GoogleApiClient.OnConnectionFailedListener,
+            GoogleApiClient.ConnectionCallbacks {
+
         final Handler mUpdateTimeHandler = new EngineHandler(this);
         boolean mRegisteredTimeZoneReceiver = false;
         Paint mBackgroundPaint;
@@ -119,6 +138,14 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
 
+            // initialize comms with the app
+            mGoogleApiClient = new GoogleApiClient.Builder(SunshineWatchFace.this)
+                    .addApi(Wearable.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+            mGoogleApiClient.connect();
+
             // initialize the watch face
             setWatchFaceStyle(new WatchFaceStyle.Builder(SunshineWatchFace.this)
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
@@ -128,7 +155,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                     .build());
 
             Resources resources = SunshineWatchFace.this.getResources();
-            // TODO add the icons I will use setting up the icons
+            // TODO see how to show the icons
             weatherIcon = BitmapFactory.decodeResource(resources, R.drawable.preview_digital_circular);
 
             mYOffset = resources.getDimension(R.dimen.digital_y_offset);
@@ -314,6 +341,43 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                         - (timeMs % INTERACTIVE_UPDATE_RATE_MS);
                 mUpdateTimeHandler.sendEmptyMessageDelayed(MSG_UPDATE_TIME, delayMs);
             }
+        }
+
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+            Log.i("Watchface", "Called onConnected");
+            Wearable.DataApi.addListener(mGoogleApiClient, this);
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+            Log.i("Watchface", "Called onConnectionSuspended");
+
+        }
+
+        @Override
+        public void onDataChanged(DataEventBuffer dataEvents) {
+            Log.d("WatchFace", "called onDataChanged");
+
+            for (DataEvent dataEvent : dataEvents) {
+                if (dataEvent.getType() == DataEvent.TYPE_CHANGED) {
+                    DataMap dataMap = DataMapItem.fromDataItem(dataEvent.getDataItem()).getDataMap();
+                    String path = dataEvent.getDataItem().getUri().getPath();
+                    if (path.equals("/weather")) {
+                        double newHighTemp = dataMap.getDouble("high");
+                        double newLowTemp = dataMap.getDouble("low");
+
+                        Log.d("WatchFace", "Received new weather");
+                        Log.d("WatchFace", "new high "+newHighTemp);
+                        Log.d("WatchFace", "new low "+newLowTemp);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+            Log.i("Watchface", "Called onConnectionFailed "+connectionResult);
         }
     }
 }
