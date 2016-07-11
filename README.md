@@ -1,7 +1,7 @@
 # Sunshine-Watchface / Go Ubiquitous 
 
 Built a wearable watch face for Sunshine app to run on Android Wear devices.
-Developed as part of my [Android Developer Nanodegree](https://www.udacity.com/nanodegree) at [Udacity](https://www.udacity.com/nanodegree).
+Developed as part of my [Android Developer Nanodegree](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801) at [Udacity](https://www.udacity.com/nanodegree).
 
 These are the details of the Sunshine app
 ==========================================
