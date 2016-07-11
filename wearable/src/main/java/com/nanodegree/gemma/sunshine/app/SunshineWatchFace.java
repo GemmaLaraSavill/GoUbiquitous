@@ -85,7 +85,6 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
     @Override
     public Engine onCreateEngine() {
-        // TODO provide my watch face implementation
         return new Engine();
     }
 
@@ -331,7 +330,6 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         @Override
         public void onPropertiesChanged(Bundle properties) {
             super.onPropertiesChanged(properties);
-            // TODO get device features (burn-in, low-bit ambient
             mLowBitAmbient = properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT, false);
         }
 
@@ -366,7 +364,6 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
          */
         @Override
         public void onTapCommand(int tapType, int x, int y, long eventTime) {
-            // TODO see if I want to provide more data on tap, if not disable in on create
             Resources resources = SunshineWatchFace.this.getResources();
             switch (tapType) {
                 case TAP_TYPE_TOUCH:
