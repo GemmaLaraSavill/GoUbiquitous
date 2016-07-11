@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Sunshine</string>
     <string name="my_digital_name">Sunshine Weather</string>
+    <string name="waiting_message">Weather will appear soon</string>
 </resources>

@@ -1,8 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--text sizes-->
+    <dimen name="time_text_size">40dp</dimen>
+    <dimen name="date_text_size">15dp</dimen>
+    <dimen name="weather_text_size">35dp</dimen>
+    <dimen name="welcome_text_size">8dp</dimen>
+
+    <!--keylines-->
+    <dimen name="time_x_offset">15dp</dimen>
+    <dimen name="time_x_offset_round">27dp</dimen>
+    <dimen name="time_y_offset">85dp</dimen>
+
+    <dimen name="date_x_offset">40dp</dimen>
+    <dimen name="date_x_offset_round">52dp</dimen>
+    <dimen name="date_y_offset">105dp</dimen>
+
+    <dimen name="weather_x_offset">40dp</dimen>
+    <dimen name="weather_x_offset_round">52dp</dimen>
+    <dimen name="weather_y_offset">150dp</dimen>
+
+    <dimen name="logo_x_offset">50dp</dimen>
+    <dimen name="logo_x_offset_round">62dp</dimen>
+    <dimen name="logo_y_offset">120dp</dimen>
+    <dimen name="welcome_x_offset">46dp</dimen>
+    <dimen name="welcome_x_offset_round">58dp</dimen>
+    <dimen name="welcome_y_offset">160dp</dimen>
+
+    <!--defaults-->
     <dimen name="digital_text_size">40dp</dimen>
     <dimen name="digital_text_size_round">45dp</dimen>
     <dimen name="digital_x_offset">15dp</dimen>
     <dimen name="digital_x_offset_round">25dp</dimen>
     <dimen name="digital_y_offset">90dp</dimen>
+
 </resources>

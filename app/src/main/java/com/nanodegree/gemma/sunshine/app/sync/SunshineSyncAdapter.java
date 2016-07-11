@@ -412,17 +412,20 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements 
             int weatherId = cursor.getInt(INDEX_WEATHER_ID);
             final double highTemp = cursor.getDouble(INDEX_MAX_TEMP);
             final double lowTemp = cursor.getDouble(INDEX_MIN_TEMP);
-            int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
+            // emulate utilities getIconResource to decode the icon and send the id
+            final int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
+
+            final String highTempTxt = Utility.formatTemperature(context, highTemp);
+            final String lowTempTxt = Utility.formatTemperature(context, lowTemp);
 
             Resources resources = context.getResources();
             int artResourceId = Utility.getArtResourceForWeatherCondition(weatherId);
             String artUrl = Utility.getArtUrlForWeatherCondition(context, weatherId);
 
             // bundle data to send to watch
-            putDataMapRequest.getDataMap().putDouble("high", highTemp);
-            putDataMapRequest.getDataMap().putDouble("low", lowTemp);
-            // TODO see how to send icon flag
-//            putDataMapRequest.getDataMap().putDouble("low", low);
+            putDataMapRequest.getDataMap().putString("high", highTempTxt);
+            putDataMapRequest.getDataMap().putString("low", lowTempTxt);
+           putDataMapRequest.getDataMap().putInt("icon", iconId);
 
             // send to wearable
             PutDataRequest request = putDataMapRequest.asPutDataRequest();
@@ -434,8 +437,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements 
                                 Log.e("Wearable", "Failed to send weather to watch");
                             } else {
                                 Log.d("Wearable", "Sent weather to watch");
-                                Log.d("Wearable", "High temp "+highTemp);
-                                Log.d("Wearable", "Low temp "+lowTemp);
+                                Log.d("Wearable", "High temp "+highTempTxt);
+                                Log.d("Wearable", "Low temp "+lowTempTxt);
+                                Log.d("Wearable", "Icon "+iconId);
                             }
                         }
                     });
