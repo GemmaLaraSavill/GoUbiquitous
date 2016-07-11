@@ -78,7 +78,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
     private Bitmap weatherIcon;
     private String mHighTemp;
     private String mLowTemp;
-    private int mIconId;
+    private int mWeatherId;
     private GoogleApiClient mGoogleApiClient;
 
 
@@ -142,8 +142,11 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         float mTimeYOffset;
         float mDateXOffset;
         float mDateYOffset;
-        float mWeatherXOffset;
-        float mWeatherYOffset;
+        float mTempHighXOffset;
+        float mTempLowXOffset;
+        float mTempYOffset;
+        float mWeatherIconXOffset;
+        float mWeatherIconYOffset;
         float mLogoXOffset;
         float mLogoYOffset;
         float mWelcomeXOffset;
@@ -195,16 +198,12 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             logoIcon = BitmapFactory.decodeResource(resources, R.drawable.ic_logo);
             welcomeTxt = resources.getString(R.string.waiting_message);
 
-            // initial keyline values for formatting, commented out ones are now set in onApplyWindowInsets() so that different values are given for square and round watches
-//            mTimeXOffset = resources.getDimension(R.dimen.time_x_offset);
+            // initial keyline values for formatting, some are now set in onApplyWindowInsets() so that different values are given for square and round watches
             mTimeYOffset = resources.getDimension(R.dimen.time_y_offset);
-//            mDateXOffset = resources.getDimension(R.dimen.date_x_offset);
             mDateYOffset = resources.getDimension(R.dimen.date_y_offset);
-//            mWeatherXOffset = resources.getDimension(R.dimen.weather_x_offset);
-            mWeatherYOffset = resources.getDimension(R.dimen.weather_y_offset);
-//            mLogoXOffset = resources.getDimension(R.dimen.logo_x_offset);
+            mWeatherIconYOffset = resources.getDimension(R.dimen.icon_y_offset);
+            mTempYOffset =  resources.getDimension(R.dimen.temp_y_offset);
             mLogoYOffset = resources.getDimension(R.dimen.logo_y_offset);
-//            mWelcomeXOffset = resources.getDimension(R.dimen.welcome_x_offset);
             mWelcomeYOffset = resources.getDimension(R.dimen.welcome_y_offset);
 
             // initializing paint objects
@@ -229,12 +228,13 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             // text sizes
             float timeTextSize = resources.getDimension(R.dimen.time_text_size);
             float dateTextSize = resources.getDimension(R.dimen.date_text_size);
-            float weatherTextSize = resources.getDimension(R.dimen.weather_text_size);
+            float highTempTextSize = resources.getDimension(R.dimen.high_temp_text_size);
+            float lowTempTextSize = resources.getDimension(R.dimen.low_temp_text_size);
             float welcomeTextSize = resources.getDimension(R.dimen.welcome_text_size);
             mTimeTextPaint.setTextSize(timeTextSize);
             mDateTextPaint.setTextSize(dateTextSize);
-            mHighTempTextPaint.setTextSize(weatherTextSize);
-            mLowTempTextPaint.setTextSize(weatherTextSize);
+            mHighTempTextPaint.setTextSize(highTempTextSize);
+            mLowTempTextPaint.setTextSize(lowTempTextSize);
             mWelcomeTextPaint.setTextSize(welcomeTextSize);
 
             // text weights
@@ -312,8 +312,12 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                     ? R.dimen.time_x_offset_round : R.dimen.time_x_offset);
             mDateXOffset = resources.getDimension(isRound
                     ? R.dimen.date_x_offset_round : R.dimen.date_x_offset);
-            mWeatherXOffset = resources.getDimension(isRound
-                    ? R.dimen.weather_x_offset_round : R.dimen.weather_x_offset);
+            mWeatherIconXOffset = resources.getDimension(isRound
+                    ? R.dimen.icon_x_offset_round : R.dimen.icon_x_offset);
+            mTempHighXOffset = resources.getDimension(isRound
+                    ? R.dimen.temp_high_x_offset_round : R.dimen.temp_high_x_offset);
+            mTempLowXOffset = resources.getDimension(isRound
+                    ? R.dimen.temp_low_x_offset_round : R.dimen.temp_low_x_offset);
             mLogoXOffset= resources.getDimension(isRound
                     ? R.dimen.logo_x_offset_round : R.dimen.logo_x_offset);
             mWelcomeXOffset = resources.getDimension(isRound
@@ -346,6 +350,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 mAmbient = inAmbientMode;
                 if (mLowBitAmbient) {
                     mTimeTextPaint.setAntiAlias(!inAmbientMode);
+                    mHighTempTextPaint.setAntiAlias(!inAmbientMode);
                 }
                 invalidate();
             }
@@ -405,10 +410,18 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
             // draw wheather temperatures, only in active mode
             if (mHighTemp != null && mLowTemp != null) {
-                Log.d("Watchface", "newHighTemp "+mHighTemp);
-                Log.d("Watchface", "newLowTemp "+mLowTemp);
-                canvas.drawText(mHighTemp+" "+mLowTemp, mWeatherXOffset, mWeatherYOffset, mDateTextPaint);
-                canvas.drawBitmap(weatherIcon, mLogoXOffset, mLogoYOffset, null);
+//                Log.d("Watchface", "newHighTemp "+mHighTemp);
+//                Log.d("Watchface", "newLowTemp "+mLowTemp);
+                canvas.drawText(mHighTemp, mTempHighXOffset, mTempYOffset, mHighTempTextPaint);
+                if (!isInAmbientMode()) {
+                    canvas.drawText(mLowTemp, mTempLowXOffset, mTempYOffset, mLowTempTextPaint);
+                }
+                if (!isInAmbientMode()) {
+                    if (weatherIcon != null) {
+    //                    Log.d("Watchface", "drawing weatherIcon "+weatherIcon);
+                        canvas.drawBitmap(weatherIcon, mWeatherIconXOffset, mWeatherIconYOffset, null);
+                    }
+                }
             } else {
                 // No weather info from app yet, so let's display the Sunshine logo and a welcome text
                 if(!isInAmbientMode()) {
@@ -475,13 +488,17 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                     if (path.equals("/weather")) {
                         mHighTemp = dataMap.getString("high");
                         mLowTemp = dataMap.getString("low");
-                        mIconId = dataMap.getInt("icon");
-                        weatherIcon = BitmapFactory.decodeResource(SunshineWatchFace.this.getResources(), mIconId);
+                        mWeatherId = dataMap.getInt("weatherId");
+
+                        if (mWeatherId != -1) {
+                            int iconId = Utility.getIconResourceForWeatherCondition(mWeatherId);
+                            weatherIcon = BitmapFactory.decodeResource(SunshineWatchFace.this.getResources(), iconId);
+                        }
 
                         Log.d("WatchFace", "Received new weather");
                         Log.d("WatchFace", "new high "+mHighTemp);
                         Log.d("WatchFace", "new low "+mLowTemp);
-                        Log.d("WatchFace", "new icon "+mIconId);
+                        Log.d("WatchFace", "weather id "+mWeatherId);
                     }
                 }
             }

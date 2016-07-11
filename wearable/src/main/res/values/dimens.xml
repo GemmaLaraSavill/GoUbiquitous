@@ -4,7 +4,8 @@
     <!--text sizes-->
     <dimen name="time_text_size">40dp</dimen>
     <dimen name="date_text_size">15dp</dimen>
-    <dimen name="weather_text_size">35dp</dimen>
+    <dimen name="high_temp_text_size">36dp</dimen>
+    <dimen name="low_temp_text_size">30dp</dimen>
     <dimen name="welcome_text_size">8dp</dimen>
 
     <!--keylines-->
@@ -16,9 +17,16 @@
     <dimen name="date_x_offset_round">52dp</dimen>
     <dimen name="date_y_offset">105dp</dimen>
 
-    <dimen name="weather_x_offset">40dp</dimen>
-    <dimen name="weather_x_offset_round">52dp</dimen>
-    <dimen name="weather_y_offset">150dp</dimen>
+    <dimen name="icon_x_offset">20dp</dimen>
+    <dimen name="icon_x_offset_round">32dp</dimen>
+    <dimen name="icon_y_offset">125dp</dimen>
+
+    <dimen name="temp_high_x_offset">68dp</dimen>
+    <dimen name="temp_high_x_offset_round">82dp</dimen>
+    <dimen name="temp_y_offset">160dp</dimen>
+
+    <dimen name="temp_low_x_offset">126dp</dimen>
+    <dimen name="temp_low_x_offset_round">142dp</dimen>
 
     <dimen name="logo_x_offset">50dp</dimen>
     <dimen name="logo_x_offset_round">62dp</dimen>

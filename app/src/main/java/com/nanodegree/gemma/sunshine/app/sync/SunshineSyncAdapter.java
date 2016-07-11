@@ -409,23 +409,17 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements 
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/weather");
 
         if (cursor.moveToFirst()) {
-            int weatherId = cursor.getInt(INDEX_WEATHER_ID);
+            final int weatherId = cursor.getInt(INDEX_WEATHER_ID);
             final double highTemp = cursor.getDouble(INDEX_MAX_TEMP);
             final double lowTemp = cursor.getDouble(INDEX_MIN_TEMP);
-            // emulate utilities getIconResource to decode the icon and send the id
-            final int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
 
             final String highTempTxt = Utility.formatTemperature(context, highTemp);
             final String lowTempTxt = Utility.formatTemperature(context, lowTemp);
 
-            Resources resources = context.getResources();
-            int artResourceId = Utility.getArtResourceForWeatherCondition(weatherId);
-            String artUrl = Utility.getArtUrlForWeatherCondition(context, weatherId);
-
             // bundle data to send to watch
             putDataMapRequest.getDataMap().putString("high", highTempTxt);
             putDataMapRequest.getDataMap().putString("low", lowTempTxt);
-           putDataMapRequest.getDataMap().putInt("icon", iconId);
+            putDataMapRequest.getDataMap().putInt("weatherId", weatherId);
 
             // send to wearable
             PutDataRequest request = putDataMapRequest.asPutDataRequest();
@@ -439,7 +433,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter implements 
                                 Log.d("Wearable", "Sent weather to watch");
                                 Log.d("Wearable", "High temp "+highTempTxt);
                                 Log.d("Wearable", "Low temp "+lowTempTxt);
-                                Log.d("Wearable", "Icon "+iconId);
+                                Log.d("Wearable", "weatherId "+weatherId);
                             }
                         }
                     });
